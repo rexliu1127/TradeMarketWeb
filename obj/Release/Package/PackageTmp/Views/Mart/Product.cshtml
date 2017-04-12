@@ -1,0 +1,501 @@
+﻿
+@{
+    ViewBag.Title = "Product";
+    Layout = "~/Views/Shared/_LayoutFront.cshtml";
+}
+
+
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+
+
+
+
+<script>
+    function getParameterByName(name, url) {
+        if (!url) {
+            url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function checkCreate(product_customize_id, product_name, quantity) {
+        var msg = '';
+        var error = '';
+        //console.log('customize_id:' + customize_id);
+
+        if (product_customize_id == '') {
+            error = '請輸入代碼';
+            console.log('error:' + error);
+            if (msg == '') {
+                msg = error;
+            }
+            else {
+                msg = msg + '\r' + error;
+            }
+        }
+
+        console.log(msg);
+
+        if (product_name == '') {
+            error = '請輸入名稱';
+            if (msg == '') {
+                msg = error;
+            }
+            else {
+                msg = msg + '\r' + error;
+            }
+        }
+        if ($.isNumeric(quantity) == '') {
+            error = '數量必須為數字';
+            if (msg == '') {
+                msg = error;
+            }
+            else {
+                msg = msg + '\r' + error;
+            }
+        }        
+
+        if (msg == '') {
+            return true;
+        }
+        else {
+            alert(msg);
+            return false;
+        }
+    }
+
+
+    //$(document).ready(function () {        
+
+    //    $.get('http://220.130.10.50:6868/api/WebApi/getProductByType?productType=' + getParameterByName('productType'), "", function (data) {
+    //        var path = '';
+
+    //        //data = '[{"id":1,"name":"香蕉類"},{"id":2,"name":"西瓜類"},{"id":3,"name":"蘋果類"}]';
+
+    //        var obj = JSON.parse(data);
+
+    //        for (var k in obj)
+    //        {
+    //            if (path == '') {
+    //                path = '<a href="Product?productType=' + obj[k].catalog_id + '">' + obj[k].name + '</a>'
+    //            }
+    //            else
+    //            {
+    //                path = path+'>'+'<a href="Product?productType=' + obj[k].catalog_id + '">' + obj[k].name + '</a>'
+    //            }
+    //        }
+
+    //        $("#path").html(path);
+
+    //    });
+
+    //    $('#productTable').DataTable({
+    //        "ajax": {
+    //            "url": 'http://220.130.10.50:6868/api/WebApi/getProductByType?productType=' + getParameterByName('productType'),
+    //            "dataSrc": ""
+    //        },
+    //        "language": {
+    //            "url": "/Scripts/Chinese-traditional.json" //"http://cdn.datatables.net/plug-ins/1.10.12/i18n/Chinese-traditional.json"
+    //        },
+    //        "columns": [
+    //            { "data": "ProductCustomizeID" },
+    //            { "data": "ProductName" },
+    //            { "data": "ProductUnitName" },
+    //            { "data": "ProductTypeName" }
+    //        ]
+    //    });
+
+
+    //});
+
+</script>
+
+
+<script type="text/jsx">
+
+    var listOfProduct = [{ProductCustomizeID:1,ProductName:"香蕉",price:1,unit_name:"PCS"},
+    {ProductCustomizeID:2,ProductName:"芭樂",price:1,unit_name:"PCS"},
+    {ProductCustomizeID:3,ProductName:"西瓜",price:1,unit_name:"PCS"},
+    {ProductCustomizeID:4,ProductName:"蘋果",price:1,unit_name:"PCS"},
+    ]  //['id':'1234','JavaScript', 'Java', 'Node', 'Python'];
+
+    console.log('http://220.130.10.50:6868/api/WebApi/getProductByType?productType=' + getParameterByName('productType'));
+
+    fetch('http://220.130.10.50:6868/api/WebApi/getProductByType?productType=' + getParameterByName('productType'), {
+    method: 'get'
+    }).then(function(response) {
+    return response.json();
+    }).then(function(returnObj) {
+    //console.log('R:'+returnObj);
+    
+    listOfProduct = returnObj;
+    
+    
+
+    
+    class DataTable extends React.Component {
+    render() {
+    return (
+    <table id="tb_product" className="table-hover">
+        <thead>
+            <tr>
+                <th>
+
+                </th>
+                <th>
+                    代碼
+                </th>
+                <th>
+                    名稱
+                </th>                
+                <th>
+                    單位
+                </th>                
+            </tr>
+        </thead>
+        <tbody>
+            {listOfProduct.map((result, index) => {
+            return (
+
+
+                <tr key={index}>                    
+                    <td>
+                        <button type="button" class="btn btn-info btn-md" data-toggle="modal" id={result.ProductCustomizeID} data-product_name={result.ProductName} data-product_unit_name={result.ProductUnitName}  data-target="#myModal">下單</button>
+                    </td>                    
+                    <td>{result.ProductCustomizeID}</td>
+                    <td>{result.ProductName}</td>
+                    <td>{result.ProductUnitName}</td>
+                </tr>
+
+                );
+            })}
+        </tbody>
+    </table>);
+    }
+    }
+
+
+    ReactDOM.render(
+    <DataTable />, document.getElementById('div_product'));
+
+    $('#tb_product').DataTable({
+    "language": {
+    "url": "/Scripts/Chinese-traditional.js"
+    }
+    });
+
+    }).catch(function(err) {
+    console.log(err);
+    });
+
+
+
+</script>
+
+<br />
+<div id="div_product2">
+
+</div>
+
+<script>
+    function doQuery() {
+
+        $.get('http://220.130.10.50:6868/api/WebApi/getProductCountByType?productType=' + getParameterByName('productType'), function (data) {
+            console.log(data);
+            //if (data > 1000) {
+            //    $('#msg').html('資料筆數:' + data + '筆,請縮小查詢範圍');
+            //    return;
+            //}
+            //else
+            if (data == 0) {
+                $('#msg').html('資料筆數:' + data + '筆,請重新輸入條件');
+                return;
+            }
+            else {
+                $('#tb_product_list').css("visibility", "visible");
+                $('#msg').html('');
+
+                $('#tb_product_list').DataTable(
+                    {
+                        "ajax": {
+                            "url": "http://220.130.10.50:6868/api/WebApi/getProductByType?productType=" + getParameterByName('productType'),
+                            "dataSrc": ""
+                        },
+                        "columnDefs": [
+                            {
+                                "width": 60,
+                                "targets": 0,
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<button type="button" class="btn btn-info btn-md" data-toggle="modal" id=' + data.ProductCustomizeID +
+                                        ' data-product_name=' + data.ProductName +
+                                        ' data-product_unit_name=' + data.ProductUnitName +
+                                        ' data-target="#myModal">下單</button>'
+                                        ;
+                                }
+                            },
+                            {
+                                "targets": 1,
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<button type="button" class="btn btn-md btn-default" data-toggle="modal" id=' + data.ProductCustomizeID +
+                                            ' data-img_url=' + 'http://ppt.cc/qqXvt' +
+                                            ' data-target="#imgModal">' +
+                                            '<img width="100%" src="http://ppt.cc/qqXvt" />' +
+                                            '</button>'
+                                        ;
+                                }
+                            },
+                            {
+                                "targets": 2,
+                                "data": "ProductCustomizeID"
+                            },
+                            {
+                                "targets": 3,
+                                "data": "ProductName"
+                            },
+                            {
+                                "targets": 4,
+                                "data": "ProductUnitName"
+                            },
+                        ],
+                        "aaSorting": [[2, 'asc']],
+                        "language": {
+                            "url": "/Scripts/Chinese-traditional.js"
+                        },
+                        "bDestroy": true,
+                        "autoWidth": true
+                    });
+            }
+        });
+
+    }
+
+    doQuery();
+</script>
+
+<div>
+    <table id="tb_product_list" class="table-hover"  style="visibility:hidden">
+        <thead>
+            <tr>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+                <th>
+                    代碼
+                </th>
+                <th>
+                    名稱
+                </th>
+                <th>
+                    單位
+                </th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+
+<br />
+
+
+<script>
+
+    $(document).ready(function ($) {
+        $('#imgModal').on('shown.bs.modal', function (e) {
+            //alert('hi');
+            var $modal = $(this);            
+            var imgUrl = $(e.relatedTarget).data('img_url');
+                        
+            $modal.find('#imgBig').attr("src",imgUrl);
+            
+        })
+    })
+
+    $(document).ready(function ($) {
+        $('#myModal').on('shown.bs.modal', function (e) {
+            //alert('hi');
+            var $modal = $(this);
+            var id = e.relatedTarget.id;
+            var product_name = $(e.relatedTarget).data('product_name');
+            var product_unit_name = $(e.relatedTarget).data('product_unit_name');
+            //alert(product_name);
+            //alert(id);
+            $modal.find('#product_customize_id').html(id);
+            $modal.find('#product_name').html(product_name);
+            $modal.find('#product_unit_name').html(product_unit_name);
+
+            $modal.find('#hid_product_customize_id').val(id);
+            $modal.find('#hid_product_name').val(product_name);
+            $modal.find('#hid_product_unit_name').val(product_unit_name);
+        })
+    })
+
+
+
+</script>
+
+@using (Html.BeginForm("addCart", "Mart", new { returnUrl = @Request.RawUrl}))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="container">
+
+
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">下單</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                編號
+                            </dt>
+
+                            <dd>
+                                <input id="hid_product_customize_id" name="product_customize_id" type="hidden" />
+                                <span id="product_customize_id"></span>
+                            </dd>
+
+                            <dt>
+                                名稱
+                            </dt>
+
+                            <dd>
+                                <input id="hid_product_name" name="product_name" type="hidden" />
+                                <span id="product_name"></span>
+                            </dd>
+
+                            <dt>
+                                數量
+                            </dt>
+
+                            <dd>
+                                @Html.TextBox("quantity", "", new { placeholder = "數量" })
+                                <span id="product_unit_name"></span>
+                                <input id="hid_product_unit_name" name="product_unit_name" type="hidden" />
+                            </dd>
+
+
+                        </dl>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default" onclick="return checkCreate($('#hid_product_customize_id').val(),$('#hid_product_name').val(),$('#quantity').val())" >儲存</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+}
+
+<div class="container">
+
+
+    <div class="modal fade" id="imgModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">圖片</h4>
+                </div>
+                <div class="modal-body">
+                    <img id="imgBig" width="100%" src=""/>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+        @*<div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            白菜
+                            <img src="~/Image/buy.jpg" height="350" width="700" class="img-responsive">
+                            <div class="caption">
+                                <div class="row">
+                                    <div class="col-md-8 col-sm-8 col-xs-8">
+                                        <a href="#" class="btn btn-success btn-product"><span class="glyphicon glyphicon-shopping-cart"></span> 下單</a>
+                                    </div>
+                                </div>
+                                <p> </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            高麗菜
+                            <img src="~/Image/guo.jpg" height="350" width="700" class="img-responsive">
+                            <div class="caption">
+                                <div class="row">
+
+                                    <div class="col-md-8 col-sm-8 col-xs-8">
+                                        <a href="#" class="btn btn-success btn-product"><span class="glyphicon glyphicon-shopping-cart"></span>下單</a>
+                                    </div>
+                                </div>
+                                <p> </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="thumbnail">
+                            香蕉
+                            <img src="~/Image/bana.jpg" height="350" width="700" class="img-responsive">
+                            <div class="caption">
+                                <div class="row">
+                                    <div class="col-md-8 col-sm-8 col-xs-8">
+                                        <a href="#" class="btn btn-success btn-product"><span class="glyphicon glyphicon-shopping-cart"></span> 下單</a>
+                                    </div>
+                                </div>
+                                <p> </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3">
+
+                        <div class="thumbnail">
+                            西瓜
+                            <img src="~/Image/wat.jpg" height="350" width="700" class="img-responsive">
+                            <div class="caption">
+                                <div class="row">
+                                    <div class="col-md-8 col-sm-8 col-xs-8">
+                                        <a href="#" class="btn btn-success btn-product"><span class="glyphicon glyphicon-shopping-cart"></span> 下單</a>
+                                    </div>
+                                </div>
+                                <p> </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@

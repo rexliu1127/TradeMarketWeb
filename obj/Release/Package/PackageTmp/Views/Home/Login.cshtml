@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+
+       <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-md-offset-4">
+                <div class="account-wall">
+                    <div id="my-tab-content" class="tab-content">
+                        <div class="tab-pane active" id="login">
+                            <img class="profile-img" src="~/Image/loginlogo.png"
+                                 alt="">
+                        @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { @class = "form-signin" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <form class="form-signin" action="Login" method="post">
+                                <input name="account" type="text" class="form-control" placeholder="帳號" required autofocus>
+                                <input name="password" type="password" class="form-control" placeholder="密碼" required>
+                                <input type="submit" class="btn btn-lg btn-default btn-block" value="登入" />
+                            </form>
+                        }                           
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+

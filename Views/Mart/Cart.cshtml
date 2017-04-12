@@ -1,0 +1,367 @@
+﻿
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_LayoutFront.cshtml";
+}
+
+<h2>購物車清單</h2>
+
+
+<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+
+<style>
+    .pull-left {
+        float: left !important;
+    }
+
+    .pull-right {
+        float: right !important;
+    }
+</style>
+
+<script>
+
+    function getCookie(name) {
+        var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+        if (arr != null) return unescape(arr[2]); return null;
+
+    }
+
+    function getCount() {
+        $.get("/api/webapi/getGlobalCustomer?department_id=" + $('#department_id').val() + "&customize_id=" + $('#customize_id').val() + "&customer_name=" + $('#customer_name').val(), function (data) {
+            alert(data);
+        });
+    }
+
+    function doQuery() {
+
+        $.get("http://220.130.10.50:6868/api/webapi/getTempCart?tempID=" + getCookie('tempID') , function (data) {
+            console.log(data);
+            if (data > 1000) {
+                $('#msg').html('資料筆數:' + data + '筆,請縮小查詢範圍');
+                return;
+            }
+            else if (data == 0) {
+                $('#msg').html('資料筆數:' + data + '筆,請重新輸入條件');
+                return;
+            }
+            else {
+                $('#tb_cart').css("visibility", "visible");
+                $('#msg').html('');
+
+                $('#tb_cart').DataTable(
+                    {
+                        "ajax": {
+                            "url": "http://220.130.10.50:6868/api/webapi/getTempCart?tempID=" + getCookie('tempID'),
+                            "dataSrc": ""
+                        },
+                        "columnDefs": [
+                            {
+                                "width": 120,
+                                "targets": 0,
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<button type="button" class="btn btn-info btn-md" data-toggle="modal" id=' + data.id +
+                                        ' data-product_customize_id=' + data.product_customize_id +
+                                        ' data-product_name=' + data.product_name +
+                                        ' data-quantity=' + data.quantity +
+                                        ' data-unit_name=' + data.unit_name +
+                                        ' data-target="#editModal">修改</button> | ' +
+                                        '<button type="button" class="btn btn-danger btn-md" data-toggle="modal" id=' + data.id +
+                                        ' data-product_customize_id=' + data.product_customize_id +
+                                        ' data-product_name=' + data.product_name +
+                                        ' data-quantity=' + data.quantity +
+                                        ' data-unit_name=' + data.unit_name +
+                                        ' data-target="#deleteModal">刪除</button>'
+                                        ;
+                                }
+                            },
+                            {
+                                "targets": 1,
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<button type="button" class="btn btn-md btn-default" data-toggle="modal" id=' + data.ProductCustomizeID +
+                                        ' data-img_url=' + 'http://ppt.cc/qqXvt' +
+                                        ' data-target="#imgModal">' +
+                                        '<img width="100%" src="http://ppt.cc/qqXvt" />' +
+                                        '</button>'
+                                        ;
+                                }
+                            },
+                            {
+                                "targets": 2,
+                                "data": "product_customize_id"
+                            },
+                            {
+                                "targets": 3,
+                                "data": "product_name"
+                            },
+                            {
+                                "targets": 4,
+                                "data": "quantity"
+                            },
+                            {
+                                "targets": 5,
+                                "data": "unit_name"
+                            },
+                        ],
+                        "aaSorting": [[2, 'asc']],
+                        "language": {
+                            "url": "/Scripts/Chinese-traditional.js"
+                        },
+                        "bDestroy": true
+                    });
+            }
+        });
+
+    }
+
+    doQuery();
+
+</script>
+
+<table id="tb_cart" style="visibility:hidden">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>代碼</th>
+            <th>名稱</th>
+            <th>數量</th>
+            <th>單位</th>
+        </tr>
+    </thead>
+</table>
+<p>
+
+</p>
+<div class="pull-right">
+    <button type="button" class="btn btn-warning">確定下單</button>
+</div>
+
+<script>
+
+    $(document).ready(function ($) {
+        $('#imgModal').on('shown.bs.modal', function (e) {
+            var $modal = $(this);
+            var imgUrl = $(e.relatedTarget).data('img_url');
+
+            $modal.find('#imgBig').attr("src", imgUrl);
+
+        })
+    })
+
+
+    $(document).ready(function ($) {
+
+        
+
+        $('#editModal').on('shown.bs.modal', function (e) {
+            var $modal = $(this);
+            var id = e.relatedTarget.id;
+            var product_customize_id = $(e.relatedTarget).data('product_customize_id');
+            var product_name = $(e.relatedTarget).data('product_name');
+            var quantity = $(e.relatedTarget).data('quantity');
+            var product_unit_name = $(e.relatedTarget).data('product_unit_name');
+            
+            //alert(product_name);
+            //var m = $modal.find('#product_name');
+            //alert(m.html());
+
+
+            $modal.find('#product_customize_id').html(product_customize_id);
+            $modal.find('#product_name').html(product_name);
+            $modal.find('#quantity').val(quantity);
+            $modal.find('#product_unit_name').html(product_unit_name);
+
+
+            //getCustomer
+            //$.get("/api/webapi/getOneGlobalCustomer?id=" + id, function (data) {
+
+            //    objData = JSON.parse(data);
+            //    console.log(objData.customer_name);
+            //    var customer_name = objData.customer_name;
+            //    var tel_o = objData.tel_o;
+            //    var email = objData.email;
+            //    $modal.find('#customer_id').html(id);
+            //    $modal.find('#customer_name').val(customer_name);
+            //    $modal.find('#tel_o').val(tel_o);
+            //    $modal.find('#email').val(email);
+            //    $modal.find('#hid_customer_id').val(id);
+            //});
+        })
+
+        $('#deleteModal').on('shown.bs.modal', function (e) {
+            var $modal = $(this);
+            var id = e.relatedTarget.id;
+            var product_customize_id = $(e.relatedTarget).data('product_customize_id');
+            var product_name = $(e.relatedTarget).data('product_name');
+            var quantity = $(e.relatedTarget).data('quantity');
+            var product_unit_name = $(e.relatedTarget).data('product_unit_name');
+
+
+            $modal.find('#product_customize_id').html(product_customize_id);
+            $modal.find('#product_name').html(product_name);
+            $modal.find('#quantity').html(quantity);
+            $modal.find('#product_unit_name').html(product_unit_name);
+
+            //getCustomer
+            //$.get("/api/webapi/getOneGlobalCustomer?id=" + id, function (data) {
+
+            //    objData = JSON.parse(data);
+            //    console.log(objData.customer_name);
+            //    var customer_name = objData.customer_name;
+            //    var tel_o = objData.tel_o;
+            //    var email = objData.email;
+            //    $modal.find('#customer_id').html(id);
+            //    $modal.find('#customer_name').html(customer_name);
+            //    $modal.find('#tel_o').html(tel_o);
+            //    $modal.find('#email').html(email);
+            //    $modal.find('#hid_customer_id').val(id);
+            //});
+        })
+
+    })
+
+
+</script>
+
+
+@using (Html.BeginForm("EditCustomer", "Global_Customer"))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="container">
+
+
+        <div class="modal fade" id="editModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">修改購物車資料</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                代碼
+                            </dt>
+                            <dd>
+                                <input id="hid_product_customize_id" name="product_customize_id" type="hidden" />
+                                <span id="product_customize_id"></span>
+                            </dd>
+                            <dt>
+                                名稱
+                            </dt>
+
+                            <dd>                                
+                                <span id="product_name"></span>
+                            </dd>
+
+                            <dt>
+                                數量
+                            </dt>
+
+                            <dd>
+                               @Html.TextBox("quantity", "", new { placeholder = "數量" })
+                                <span id="product_unit_name"></span>
+                                
+                            </dd>
+                           
+
+                        </dl>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">儲存</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+<div class="modal fade" id="imgModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">圖片</h4>
+            </div>
+            <div class="modal-body">
+                <img id="imgBig" width="100%" src="" />
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+@using (Html.BeginForm("DeleteCustomer", "Global_Customer"))
+{
+    @Html.AntiForgeryToken()
+
+
+    <div class="container">
+
+
+        <div class="modal fade" id="deleteModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">刪除購物車資料</h4>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                代碼
+                            </dt>
+                            <dd>                                
+                                <span id="product_customize_id"></span>
+                            </dd>
+                            <dt>
+                                名稱
+                            </dt>
+                            <dd>
+                                <span id="product_name"></span>
+                            </dd>
+                            <dt>
+                                數量
+                            </dt>
+                            <dd>
+                                <span id="quantity"></span>
+                                <span id="product_unit_name"></span>
+                            </dd>
+
+                        </dl>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default">刪除</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}

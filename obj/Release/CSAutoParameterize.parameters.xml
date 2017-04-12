@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="TradeMarketEntities-Web.config Connection String" description="TradeMarketEntities 應用程式在 web.config 中用來存取資料庫的連接字串。" defaultValue="metadata=res://*/db.csdl|res://*/db.ssdl|res://*/db.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=192.168.2.207,1433;initial catalog=TradeMarket;persist security info=True;user id=sa;password=`1qazxsw2;MultipleActiveResultSets=True;App=EntityFramework&quot;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\rex\\Dropbox\\Public\\MyWork\\TradeMarket\\TradeMarket\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TradeMarketEntities']/@connectionString" />
+  </parameter>
+</parameters>

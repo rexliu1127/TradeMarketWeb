@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 購物平台</title>
+    @Styles.Render("~/Content/css")
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+
+    @*<script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>*@
+    
+    
+    @* DataTables *@
+    @*<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+
+
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.1/react.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.1/react-with-addons.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.1/react-dom.js"></script>*@
+
+
+    <!-- The core React library -->
+    <script src="~/Scripts/react.js"></script>
+    <!-- The ReactDOM Library -->
+    <script src="~/Scripts/react-dom.js"></script>
+    <script src="~/Scripts/JSXTransformer.js"></script>
+
+
+
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/reactable/0.14.1/reactable.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fixed-data-table/0.6.3/fixed-data-table-base.css"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fixed-data-table/0.6.3/fixed-data-table-style.css"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fixed-data-table/0.6.3/fixed-data-table.css"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fixed-data-table/0.6.3/fixed-data-table.js"></script>
+
+    <script type="application/json" src="https://raw.github.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
+    </script>*@
+
+    @*<script src="~/Scripts/jquery.twbsPagination.js"></script>
+    <script src="~/Scripts/pagination.js"></script>*@
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+
+
+</head>
+<body>
+
+    @if (Session["account"] == null)
+    {
+        <script type="text/javascript">
+            alert('請先登入');
+            window.location.replace("@Url.Action("Login", "Home")");
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            //alert('1234');
+            //alert('@Session["account"].ToString()');
+        </script>
+    }
+
+    @{ 
+        if (Request.Cookies["cartCount"] != null)
+        {
+            var a = Request.Cookies["cartCount"].Value;
+        }
+    }
+    <script>
+            function SetCookie(name, value)
+            {
+                var Days = 30;
+                var exp = new Date();
+                exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+                document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+            }
+            function getCookie(name)   
+            {
+                var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+                if (arr != null) return unescape(arr[2]); return null;
+
+            }
+
+    </script>
+    <div  class="navbar navbar-inverse navbar-fixed-top">
+        <div  class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("奶油市集", "Index", "Mart", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div id="cart" style="float:right" class="navbar-collapse collapse">
+                @*@Html.ActionLink("購物車(0)", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+                <a id="TempCartCounts" class="navbar-brand" href="/Mart/Cart">購物車(<span id="spCartCount" style="color:red"></span>)</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("產品管理", "Index", "Home")</li>
+                        <li>@Html.ActionLink("分類管理", "About", "Home")</li>
+                        <li>@Html.ActionLink("訂單管理", "Contact", "Home")</li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+        </div>
+    </div>
+
+    <script type="text/jsx">
+
+
+
+        var listOfProduct = [{customize_id:1,product_name:"香蕉",price:1,unit_name:"PCS"},
+        {customize_id:2,product_name:"芭樂",price:1,unit_name:"PCS"},
+        {customize_id:3,product_name:"西瓜",price:1,unit_name:"PCS"},
+        {customize_id:4,product_name:"蘋果",price:1,unit_name:"PCS"},
+        ]  //['id':'1234','JavaScript', 'Java', 'Node', 'Python'];
+
+        console.log(listOfProduct);
+
+        fetch('http://220.130.10.50:6868/api/webapi/getProductType', {
+        method: 'get'
+        }).then(function(response) {
+        return response.json();
+        }).then(function(returnObj) {
+        console.log('R:'+returnObj);
+        listOfProduct = returnObj;
+        class CatalogsMenu extends React.Component {
+        render() {
+        return (
+        <ul id="ul_catalogs" className="nav nav-pills nav-stacked">
+            {listOfProduct.map((result, index) => {
+            return (
+            <li  key={index}>
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <a href={'/Mart/Product?productType=' + result.ProductTypeName}>{result.ProductTypeName}</a>
+            </li>);
+            })}
+        </ul>);
+        }
+        }
+
+
+        ReactDOM.render(
+        <CatalogsMenu />, document.getElementById('div_catalogs'));
+
+        }).catch(function(err) {
+        console.log(err);
+        });
+
+
+    </script>
+
+    @*<div class="container-fluid body-content">*@
+    <div class=container body-content">
+        <div class="row">
+            <div class="col-md-2 column margintop20">
+                <div id="div_catalogs">
+
+                </div>                
+            </div>
+            <div class="col-md-8 column ui-sortable">
+                @RenderBody()
+            </div>
+        </div>
+
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script>
+            var sp = $("#spCartCount"); //$("a").find("span"); //$("#d1 > #d2 > div > a", "#spCartCount"); //$("#cart").find('span#spCartCount')
+            var cartCount = getCookie('cartCount');
+            if (cartCount != null) {                
+                sp.html(cartCount);
+            }
+            else {
+                sp.html('0');
+            }
+
+    </script>
+</body>
+
+</html>
+
