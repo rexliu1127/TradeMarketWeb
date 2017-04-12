@@ -55,7 +55,7 @@
 </head>
 <body>
 
-    @if (Session["account"] == null)
+    @if (Session["account"] == null || Session["role"])
     {
         <script type="text/javascript">
             alert('請先登入');

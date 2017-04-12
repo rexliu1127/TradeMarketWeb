@@ -216,7 +216,8 @@
     <Content Include="Views\Mart\Product.cshtml" />
     <Content Include="Views\Home\Data.cshtml" />
     <Content Include="Views\Mart\Cart.cshtml" />
-    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Shared\_LayoutBackOffice.cshtml" />
+    <Content Include="Views\BackOffice\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

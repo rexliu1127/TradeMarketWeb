@@ -145,19 +145,25 @@ namespace TradeMarket.Controllers
             {
                 Session["account"] = member.Account;
                 Session["name"] = member.Name;
+                Session["role"] = member.Role;
                 //Session["department_id"] = 
 
-                //switch ()
-                //{
-                //    default:
-                //        break;
-                //}
+                switch (member.Role)
+                {
+                    //buyer
+                    case 1:
+                        return RedirectToAction("Index", "Mart");                        
+                    case 2:
+                        return RedirectToAction("Index", "Mart");
+                    default:
+                        break;
+                }
 
-                //
+
 
                 //role 3 admin,role 1 seller, role 2 buyer
 
-                return RedirectToAction("Index", "Mart");
+                
             }
             else
             {
